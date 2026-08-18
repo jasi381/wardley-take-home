@@ -1,38 +1,104 @@
 package com.bel.c22.class5.a_abstraction;
 
-/**
- * Abstraction
- *
- * Hide the HOW, expose only the WHAT.
- * Shape defines WHAT every shape can do (area, describe); each subclass
- * decides HOW it actually computes that area.
+import com.bel.c22.class9.a_singleton.SingletonDemo;
+/*
+
+src/employee
+  -
+   class FTE {
+   }
+src/vehicle
+import
+  import FTE;
+  - TwoWheeler {
+  }
+
+a/b/c
+a/b/d
+x/y
+
+a.b.c
+a.b.d
+x.y
+abstract class Shape {
+    abstract double area();       // abstract — NO body, subclass MUST override
+    void describe() {             // concrete — HAS a body, inherited as-is
+        System.out.println("I am a shape.");
+    }
+}
+
+class Shape {
+    double area() {
+    return 1.0;
+          }
+    void describe() {             // concrete — HAS a body, inherited as-is
+        System.out.println("I am a shape.");
+    }
+}
+
+PaymentMethod {
+   abstract pay();
+}
+
+CCPM extends PaymentMethod{
+   pay() {
+   }
+}
+DCPM {
+   pay(); {
+   }
+}
+
+
+processPayment(PaymentMethod method) {
+   method.pay();
+}
  */
+
+
+
+
+
+
+
 public class AbstractionDemo {
 
+    // ==================== ABSTRACT CLASS ====================
+    // Cannot be instantiated — provides a template for subclasses
+
     static abstract class Shape {
-        private final String color;
+        String color;
+
+        // Constructor — called by subclasses via super()
 
         Shape(String color) {
             this.color = color;
         }
 
-        // abstract - no body, every subclass MUST provide its own HOW
+        // Abstract method — NO body, subclass MUST provide implementation
         abstract double area();
 
-        // concrete - HAS a body, shared by every subclass as-is
-        void describe() {
-            System.out.printf("I am a %s shape with area %.2f%n", color, area());
+        // Concrete method — has a body, inherited by all subclasses
+        void displayInfo() {
+            System.out.println("Shape color: " + color);
+            System.out.println("Area: " + area()); // calls the subclass version!
         }
     }
 
+    // ==================== CONCRETE SUBCLASSES ====================
+
     static class Circle extends Shape {
-        private final double radius;
+        double radius;
 
         Circle(String color, double radius) {
-            super(color);
+            super(color);       // calls Shape constructor
             this.radius = radius;
         }
 
+        //abstract double area1();
+
+
+        // MUST override abstract method — provides Circle-specific implementation
         @Override
         double area() {
             return Math.PI * radius * radius;
@@ -40,34 +106,87 @@ public class AbstractionDemo {
     }
 
     static class Rectangle extends Shape {
-        private final double width;
-        private final double height;
+        double length, width;
 
-        Rectangle(String color, double width, double height) {
+        Rectangle(String color, double length, double width) {
             super(color);
+            this.length = length;
             this.width = width;
-            this.height = height;
         }
 
         @Override
         double area() {
-            return width * height;
+            return length * width;
         }
     }
 
-    public static void main(String[] args) {
-        // new Shape("red"); <- would not compile: abstract classes can't be instantiated
+    // ==================== ABSTRACT CLASS WITH MIXED METHODS ====================
 
-        Shape circle = new Circle("red", 3.0);
-        Shape rectangle = new Rectangle("blue", 4.0, 5.0);
+    static abstract class Vehicle {
+        String brand;
 
-        System.out.println("=== Caller only knows the WHAT (Shape), not the HOW ===");
-        for (Shape shape : new Shape[]{circle, rectangle}) {
-            shape.describe(); // same call, different area() logic hidden inside each shape
+        Vehicle(String brand) {
+            this.brand = brand;
         }
 
-        System.out.println("\n--- Key Takeaway ---");
-        System.out.println("describe() didn't need to know if it was talking to a Circle or a Rectangle.");
-        System.out.println("It only needed the Shape abstraction.");
+        // Abstract — each vehicle type starts differently
+        abstract void start();
+
+        // Concrete — all vehicles stop the same way
+        void stop() {
+            System.out.println(brand + " has stopped.");
+        }
+    }
+
+    static class Car extends Vehicle {
+        Car(String brand) {
+            super(brand);
+        }
+
+        @Override
+        void start() {
+            System.out.println(brand + " car starts with a key ignition.");
+        }
+    }
+
+    static class Bike extends Vehicle {
+        Bike(String brand) {
+            super(brand);
+        }
+
+        @Override
+        void start() {
+            System.out.println(brand + " bike starts with a kick.");
+        }
+    }
+
+    // ==================== MAIN ====================
+    public static void main(String[] args) {
+
+        // Cannot do: Shape s = new Shape("Red"); // Compile error!
+        // Shape s1 = new Shape("abc");
+
+        // --- Abstract class with subclasses ---
+        //Shape s1 = new Shape();
+        System.out.println("=== Shape Abstraction ===");
+        Shape circle = new Circle("Red", 5);
+        circle.displayInfo();
+        // calls concrete method, which internally calls abstract area()
+        circle.area();
+
+        System.out.println();
+        Shape rect = new Rectangle("Blue", 4, 6);
+        rect.displayInfo();
+
+        // --- Polymorphism with abstract class ---
+        System.out.println("\n=== Vehicle Abstraction (Polymorphism) ===");
+        Vehicle v1 = new Car("Toyota");     // parent reference, child object
+        Vehicle v2 = new Bike("Honda");
+
+        v1.start();  // Car's version
+        v1.stop();   // inherited concrete method
+        System.out.println();
+        v2.start();  // Bike's version
+        v2.stop();   // inherited concrete method
     }
 }

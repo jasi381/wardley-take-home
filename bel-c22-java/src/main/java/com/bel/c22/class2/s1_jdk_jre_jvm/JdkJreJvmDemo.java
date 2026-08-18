@@ -1,33 +1,52 @@
 package com.bel.c22.class2.s1_jdk_jre_jvm;
 
 /**
- * JDK, JRE and JVM
+ * JdkJreJvmDemo — Demonstrating the relationship between JDK, JRE, and JVM.
  *
- * JDK (develop) contains the JRE (run), which contains the JVM (execute).
- * This demo doesn't "show" the JDK/JRE/JVM directly (they're tooling, not
- * classes) - instead it inspects the JVM your code is actually running on,
- * using values that only exist because a JRE/JVM is present.
+ * JDK = JRE + Development Tools (javac, javadoc, jdb)
+ * JRE = JVM + Core Libraries (java.lang, java.util)
+ * JVM = The engine that executes bytecode
  */
 public class JdkJreJvmDemo {
 
     public static void main(String[] args) {
-        System.out.println("=== What the running JVM tells us about itself ===");
-        System.out.println("JVM name:      " + System.getProperty("java.vm.name"));
-        System.out.println("Java version:  " + System.getProperty("java.version"));
-        System.out.println("Java vendor:   " + System.getProperty("java.vendor"));
-        System.out.println("OS:            " + System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ")");
+        /*
+        A -> B -> C
+        D -> C
 
-        System.out.println("\n=== Why you can't tell from here if a JDK is installed ===");
-        System.out.println("This class was already compiled to bytecode (.class) before it ran.");
-        System.out.println("Compiling needed 'javac', which only ships in a JDK.");
-        System.out.println("Running it only needs the JVM + core libraries, i.e. a JRE.");
-        System.out.println("That's the whole point: build-time needs the JDK, run-time only needs the JRE.");
+        C
+        B D
+        A
+         */
+        // --- JVM Info ---
+        // The JVM is what runs this program right now
+        String jvmName = System.getProperty("java.vm.name");
+        String jvmVersion = System.getProperty("java.vm.version");
+        System.out.println("=== JVM Info ===");
+        System.out.println("JVM Name:    " + jvmName);
+        System.out.println("JVM Version: " + jvmVersion);
 
-        System.out.println("\n=== Memory managed by the JVM (garbage collection) ===");
-        Runtime runtime = Runtime.getRuntime();
-        System.out.println("Max heap the JVM will use:   " + (runtime.maxMemory() / (1024 * 1024)) + " MB");
-        System.out.println("Heap currently allocated:    " + (runtime.totalMemory() / (1024 * 1024)) + " MB");
-        System.out.println("Free within allocated heap:  " + (runtime.freeMemory() / (1024 * 1024)) + " MB");
-        System.out.println("You never freed any of this by hand - the JVM's garbage collector does it.");
+        // --- JRE Info ---
+        // The JRE provides the runtime environment
+        String javaVersion = System.getProperty("java.version");
+        String javaHome = System.getProperty("java.home");
+        System.out.println("\n=== JRE Info ===");
+        System.out.println("Java Version: " + javaVersion);
+        System.out.println("Java Home:    " + javaHome);
+
+        // --- JDK Info ---
+        // The JDK includes the compiler (javac) and other dev tools
+        String javaVendor = System.getProperty("java.vendor");
+        String classVersion = System.getProperty("java.class.version");
+        System.out.println("\n=== JDK Info ===");
+        System.out.println("Vendor:        " + javaVendor);
+        System.out.println("Class Version: " + classVersion);
+
+        // --- Platform Independence ---
+        String os = System.getProperty("os.name");
+        String arch = System.getProperty("os.arch");
+        System.out.println("\n=== Platform Independence ===");
+        System.out.println("This same bytecode runs on: " + os + " (" + arch + ")");
+        System.out.println("The JVM makes it platform-independent!");
     }
 }
